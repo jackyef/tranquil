@@ -18,7 +18,7 @@
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^2.3.0",
     "prettier": "^1.19.1",
-    "typescript": "^3.7.5"
+    "typescript": "^4.3.2"
   },
   "dependencies": {
     "@prefresh/next": "^1.4.6",
@@ -26,8 +26,8 @@
     "next-plugin-preact": "^3.0.6",
     "preact": "^10.5.14",
     "preact-render-to-string": "^5.1.19",
-    "react": "npm:@preact/compat@^0.0.3",
-    "react-dom": "npm:@preact/compat@^0.0.3",
+    "react": "npm:@preact/compat",
+    "react-dom": "npm:@preact/compat",
     "react-ssr-prepass": "npm:preact-ssr-prepass@^1.1.2"
   },
   "license": "MIT"
