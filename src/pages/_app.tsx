@@ -2,6 +2,18 @@ import { ThemeProvider } from 'flair-kit';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
+/* Allow playing multiple audio sources simultaneously on mobile */
+let soundManager;
+if (typeof window !== 'undefined') {
+  if (process.env.NODE_ENV !== 'production') {
+    ({ soundManager } = require('soundmanager2'));
+  } else {
+    ({ soundManager } = require('soundmanager2/script/soundmanager2-nodebug'));
+  }
+
+  soundManager.setup({ ignoreMobileRestrictions: true });
+}
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
