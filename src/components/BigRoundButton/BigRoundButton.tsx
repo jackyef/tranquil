@@ -2,7 +2,7 @@ import { Button } from 'flair-kit';
 import { css } from 'goober';
 import { cloneElement } from 'react';
 
-interface Props {
+interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   variant?:
     | 'foreground'
     | 'background'
