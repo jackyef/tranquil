@@ -1,13 +1,5 @@
-# next-preact-typescript template
+# Tranquil
 
-A very simple template for starting a project with Next.js + Preact + TypeScript
-Based on [using-preact example](https://github.com/vercel/next.js/tree/canary/examples/using-preact)
-
-Includes:
-- TypeScript
-- Prettier
-- Eslint
-
-Bring whatever else you want on your own. 
-
-Meant personal usage, but you can use it too, I guess.
+## Ideas:
+- Background Fetch API for downloading audio resources and keeping them in the cache
+- Media Session API to play sounds even when the browser tab is in the background

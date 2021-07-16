@@ -21,10 +21,12 @@
     "typescript": "^4.3.2"
   },
   "dependencies": {
+    "@heroicons/react": "^1.0.2",
     "@prefresh/next": "^1.4.6",
     "classnames": "2",
     "flair-kit": "^0.0.4",
     "goober": "2",
+    "iconic-react": "^1.0.3",
     "next": "^11.0.1",
     "next-plugin-preact": "^3.0.6",
     "preact": "^10.5.14",
