@@ -78,7 +78,14 @@ export const Track = ({
   label,
   ...props
 }: Props) => {
-  const [volume, setVolume] = useState(initialVolume);
+  const [volume, setVolume] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        Number(localStorage.getItem(`${audioSrc}:volume`)) || initialVolume
+      );
+    }
+    return initialVolume;
+  });
   const [isLoading, setIsLoading] = useState(false);
   const prevVolume = useRef(initialVolume);
   const [state, setState] = useState<PlayStatus>('STOPPED');
@@ -98,7 +105,9 @@ export const Track = ({
     } else {
       setState('STOPPED');
     }
-  }, [playStatus, volume]);
+
+    localStorage.setItem(`${audioSrc}:volume`, String(volume));
+  }, [playStatus, volume, audioSrc]);
 
   useSound({
     onBufferChange: (isBuffering) => {

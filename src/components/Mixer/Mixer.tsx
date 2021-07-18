@@ -8,6 +8,7 @@ import {
   AudioProvider,
   AudioReactContext,
 } from '@/contexts/audio/AudioProvider';
+import { RenderOnMount } from '../RenderOnMount';
 
 const TRACKS = [
   {
@@ -98,9 +99,11 @@ const MixerContent = () => {
           flex-wrap: wrap;
         `}
       >
-        {TRACKS.map((track) => (
-          <Track key={track.audioSrc} {...track} playStatus={playStatus} />
-        ))}
+        <RenderOnMount>
+          {TRACKS.map((track) => (
+            <Track key={track.audioSrc} {...track} playStatus={playStatus} />
+          ))}
+        </RenderOnMount>
       </div>
     </div>
   );
