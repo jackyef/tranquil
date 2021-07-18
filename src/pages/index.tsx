@@ -73,7 +73,7 @@ export default function HomePage() {
           variant="background"
         >
           void
-        </Text>
+        </Text>{' '}
       </P>
 
       <Mixer />
