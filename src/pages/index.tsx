@@ -5,16 +5,27 @@ import { css } from 'goober';
 import { Moon, Sun } from 'iconic-react';
 
 export default function HomePage() {
-  const { space, colors, fontSizes, toggleColorScheme, colorScheme } =
-    useTheme();
+  const {
+    space,
+    colors,
+    fontSizes,
+    mobileFontSizes,
+    toggleColorScheme,
+    colorScheme,
+    mediaQuery,
+  } = useTheme();
 
   return (
     <div
       className={css`
-        padding: ${space['3xl']} ${space.xl};
+        padding: ${space['xl']};
         margin: 0 auto;
         max-width: 900px;
         text-align: center;
+
+        ${mediaQuery.onMobileUp} {
+          padding: ${space['3xl']} ${space.xl};
+        }
       `}
     >
       <div
@@ -46,7 +57,11 @@ export default function HomePage() {
 
       <P
         className={css`
-          font-size: ${fontSizes.h3} !important;
+          font-size: ${mobileFontSizes.h3} !important;
+
+          ${mediaQuery.onMobileUp} {
+            font-size: ${fontSizes.h3} !important;
+          }
         `}
       >
         Environmental sounds to fill the{' '}

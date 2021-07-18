@@ -1,4 +1,4 @@
-import { createContext, useCallback, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 
 export type PlayStatus = 'PLAYING' | 'STOPPED';
 
@@ -75,6 +75,53 @@ export const AudioProvider: React.FC = ({ children }) => {
     [tracksMap],
   );
 
+  const play = useCallback(() => {
+    if (playStatus === 'STOPPED') {
+      for (const audioSrc in tracksMap) {
+        tracksMap[audioSrc].ctx.resume();
+      }
+
+      setPlayStatus('PLAYING');
+    }
+  }, [playStatus, tracksMap]);
+
+  const pause = useCallback(() => {
+    if (playStatus === 'PLAYING') {
+      for (const audioSrc in tracksMap) {
+        tracksMap[audioSrc].ctx.suspend();
+      }
+      setPlayStatus('STOPPED');
+    }
+  }, [playStatus, tracksMap]);
+
+  useEffect(() => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: 'Environmental sounds',
+        artist: 'Tranquil',
+        album: '',
+        artwork: [
+          {
+            src: '/images/rain.jpeg',
+            sizes: '951x634', // HeightxWidth
+            type: 'image/jpeg',
+          },
+        ],
+      });
+
+      navigator.mediaSession.setActionHandler('play', () => play());
+      navigator.mediaSession.setActionHandler('pause', () => pause());
+    }
+  }, [play, pause]);
+
+  useEffect(() => {
+    if (playStatus === 'PLAYING') {
+      navigator.mediaSession.playbackState = 'playing';
+    } else {
+      navigator.mediaSession.playbackState = 'paused';
+    }
+  }, [playStatus]);
+
   return (
     <AudioReactContext.Provider
       value={{
@@ -82,23 +129,8 @@ export const AudioProvider: React.FC = ({ children }) => {
         addTrack,
         removeTrack,
         adjustVolume,
-        play: () => {
-          if (playStatus === 'STOPPED') {
-            for (const audioSrc in tracksMap) {
-              tracksMap[audioSrc].ctx.resume();
-            }
-
-            setPlayStatus('PLAYING');
-          }
-        },
-        pause: () => {
-          if (playStatus === 'PLAYING') {
-            for (const audioSrc in tracksMap) {
-              tracksMap[audioSrc].ctx.suspend();
-            }
-            setPlayStatus('STOPPED');
-          }
-        },
+        play,
+        pause,
       }}
     >
       {children}
