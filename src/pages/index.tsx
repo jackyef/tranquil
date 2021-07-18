@@ -1,7 +1,7 @@
 import { Mixer } from '@/components/Mixer';
 import { RenderOnMount } from '@/components/RenderOnMount';
 import { PageMetaTags } from '@/components/Seo/PageMetaTags';
-import { H1, P, Switch, Text, useTheme } from 'flair-kit';
+import { Anchor, H1, P, Switch, Text, useTheme } from 'flair-kit';
 import { css } from 'goober';
 import { Moon, Sun } from 'iconic-react';
 
@@ -35,9 +35,18 @@ export default function HomePage() {
           className={css`
             display: flex;
             height: 26px;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
           `}
         >
+          <Anchor
+            href="https://github.com/jackyef/tranquil"
+            className={css`
+              margin-right: ${space.lg};
+            `}
+          >
+            Code for Tranquil
+          </Anchor>
           <RenderOnMount>
             <Switch
               size="md"
