@@ -1,16 +1,9 @@
-import { Button } from 'flair-kit';
+import { Button, MappedColorVariant } from 'flair-kit';
 import { css } from 'goober';
 import { cloneElement } from 'react';
 
 interface Props extends React.HTMLAttributes<HTMLButtonElement> {
-  variant?:
-    | 'foreground'
-    | 'background'
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'error'
-    | 'warning';
+  variant?: MappedColorVariant;
   icon?: React.ReactElement;
 }
 

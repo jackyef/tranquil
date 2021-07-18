@@ -1,9 +1,12 @@
 import { Mixer } from '@/components/Mixer';
-import { H1, P, Text, useTheme } from 'flair-kit';
+import { RenderOnMount } from '@/components/RenderOnMount';
+import { H1, P, Switch, Text, useTheme } from 'flair-kit';
 import { css } from 'goober';
+import { Moon, Sun } from 'iconic-react';
 
 export default function HomePage() {
-  const { space, colors, fontSizes } = useTheme();
+  const { space, colors, fontSizes, toggleColorScheme, colorScheme } =
+    useTheme();
 
   return (
     <div
@@ -14,6 +17,29 @@ export default function HomePage() {
         text-align: center;
       `}
     >
+      <div
+        className={css`
+          display: flex;
+          height: 26px;
+          justify-content: flex-end;
+        `}
+      >
+        <RenderOnMount>
+          <Switch
+            size="md"
+            enabled={colorScheme === 'dark'}
+            icon={
+              colorScheme === 'dark' ? (
+                <Moon fill={colors.primary[500].color} />
+              ) : (
+                <Sun fill={colors.secondary[700].color} />
+              )
+            }
+            onChange={toggleColorScheme}
+            label="Dark color scheme"
+          />
+        </RenderOnMount>
+      </div>
       <H1>
         <Text gradient={['primary', 'success']}>Tranquil</Text>
       </H1>
@@ -23,7 +49,7 @@ export default function HomePage() {
           font-size: ${fontSizes.h3} !important;
         `}
       >
-        Environment sounds to fill the{' '}
+        Environmental sounds to fill the{' '}
         <Text
           className={css`
             font-weight: 700;

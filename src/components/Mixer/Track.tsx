@@ -1,4 +1,4 @@
-import { Button } from 'flair-kit';
+import { Button, MappedColorVariant } from 'flair-kit';
 import React, { cloneElement, useEffect, useRef, useState } from 'react';
 import Sound from 'react-sound';
 import type { ReactSoundProps } from 'react-sound';
@@ -6,14 +6,8 @@ import { css, keyframes } from 'goober';
 import { Spinner } from 'iconic-react';
 
 interface Props {
-  variant:
-    | 'dark'
-    | 'light'
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'error'
-    | 'warning';
+  label: string;
+  variant: MappedColorVariant;
   icon: React.ReactElement;
   audioSrc: string;
   playStatus: ReactSoundProps['playStatus'];
@@ -26,6 +20,7 @@ export const Track = ({
   audioSrc,
   playStatus,
   initialVolume = 50,
+  label,
   ...props
 }: Props) => {
   const [volume, setVolume] = useState(initialVolume);
@@ -76,6 +71,7 @@ export const Track = ({
       `}
     >
       <Button
+        aria-label={volume > 0 ? `Mute ${label}` : `Unmute ${label}`}
         className={buttonClass}
         isCTA
         icon={
@@ -107,6 +103,7 @@ export const Track = ({
       />
 
       <input
+        aria-label="Volume"
         type="range"
         min={0}
         max={100}

@@ -1,0 +1,1 @@
+export { RenderOnMount } from './RenderOnMount';
