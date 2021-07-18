@@ -1,3 +1,4 @@
+import { CommonMetaTags } from '@/components/Seo/CommonMetaTags';
 import { ThemeProvider } from 'flair-kit';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -16,6 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="prefetch" href="audio/nature.wav" />
         <link rel="prefetch" href="audio/15-seconds-of-silence.mp3" />
       </Head>
+      <CommonMetaTags />
       <ThemeProvider>
         <Component {...pageProps} />
       </ThemeProvider>
