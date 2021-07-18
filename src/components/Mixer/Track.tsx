@@ -2,7 +2,8 @@ import { Button } from 'flair-kit';
 import React, { cloneElement, useEffect, useRef, useState } from 'react';
 import Sound from 'react-sound';
 import type { ReactSoundProps } from 'react-sound';
-import { css } from 'goober';
+import { css, keyframes } from 'goober';
+import { Spinner } from 'iconic-react';
 
 interface Props {
   variant:
@@ -28,6 +29,7 @@ export const Track = ({
   ...props
 }: Props) => {
   const [volume, setVolume] = useState(initialVolume);
+  const [isLoading, setIsLoading] = useState(false);
   const prevVolume = useRef(initialVolume);
   const [state, setState] = useState<ReactSoundProps['playStatus']>('STOPPED');
 
@@ -54,18 +56,47 @@ export const Track = ({
           opacity: 0.4;
         `
       : '';
+  const spinningAnimation = keyframes`
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  `;
 
   return (
     <>
       <Button
         className={buttonClass}
         isCTA
-        icon={cloneElement(icon, { width: 40, height: 40 })}
+        icon={
+          isLoading ? (
+            <Spinner
+              className={css`
+                animation: ${spinningAnimation} 2s linear infinite;
+              `}
+              width={40}
+              height={40}
+            />
+          ) : (
+            cloneElement(icon, { width: 40, height: 40 })
+          )
+        }
         variant={variant}
         onClick={toggle}
         {...props}
       />
-      <Sound url={audioSrc} playStatus={state} loop volume={volume} />
+      <Sound
+        url={audioSrc}
+        playStatus={state}
+        loop
+        volume={volume}
+        // @ts-expect-error
+        onBufferChange={(isBuffering) => {
+          setIsLoading(isBuffering);
+        }}
+      />
     </>
   );
 };
