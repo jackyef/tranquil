@@ -66,7 +66,15 @@ export const Track = ({
   `;
 
   return (
-    <>
+    <div
+      className={css`
+        display: flex;
+
+        & > button {
+          margin-right: 2rem;
+        }
+      `}
+    >
       <Button
         className={buttonClass}
         isCTA
@@ -105,6 +113,6 @@ export const Track = ({
         value={volume}
         onChange={(e) => setVolume(Number(e.target.value))}
       />
-    </>
+    </div>
   );
 };
