@@ -7,7 +7,7 @@ import { publicUrl } from './CommonMetaTags';
 const defaultTitle = 'Tranquil | Environmental sounds to fill the void 🌧️ 🍃';
 const defaultDescription =
   'Tranquil is a simple web-app that provides your own mix of environmental sounds, a perfect company to your focus sessions.';
-const defaultOgImage = 'https://tranquil.vercel.app/apple-icon.png';
+const defaultOgImage = 'https://tranquil.vercel.app/og.png';
 
 interface Props {
   image?: string;
