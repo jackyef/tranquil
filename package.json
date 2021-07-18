@@ -35,7 +35,6 @@
     "preact-render-to-string": "^5.1.19",
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
-    "react-sound": "^1.2.0",
     "react-ssr-prepass": "npm:preact-ssr-prepass@^1.1.2"
   },
   "license": "MIT"

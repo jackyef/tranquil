@@ -3,8 +3,8 @@ import { Beach, Lightning, Mountain, Rain, Wind } from 'iconic-react';
 import { Button, useTheme } from 'flair-kit';
 import { css } from 'goober';
 import { Track } from './Track';
+import type { PlayStatus } from './Track';
 import { useState } from 'react';
-import type { ReactSoundProps } from 'react-sound';
 
 const TRACKS = [
   {
@@ -53,8 +53,7 @@ const TRACKS = [
 
 export const Mixer = () => {
   const { space } = useTheme();
-  const [playStatus, setPlayStatus] =
-    useState<ReactSoundProps['playStatus']>('STOPPED');
+  const [playStatus, setPlayStatus] = useState<PlayStatus>('STOPPED');
   const isStopped = playStatus === 'STOPPED';
 
   return (

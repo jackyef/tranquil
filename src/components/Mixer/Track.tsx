@@ -1,18 +1,82 @@
 import { Button, MappedColorVariant } from 'flair-kit';
 import React, { cloneElement, useEffect, useRef, useState } from 'react';
-import Sound from 'react-sound';
-import type { ReactSoundProps } from 'react-sound';
 import { css, keyframes } from 'goober';
 import { Spinner } from 'iconic-react';
 
+export type PlayStatus = 'PLAYING' | 'STOPPED';
 interface Props {
   label: string;
   variant: MappedColorVariant;
   icon: React.ReactElement;
   audioSrc: string;
-  playStatus: ReactSoundProps['playStatus'];
+  playStatus: PlayStatus;
   initialVolume?: number;
 }
+
+interface SoundProps {
+  src: string;
+  playStatus: PlayStatus;
+  volume: number;
+  loop: boolean;
+  onBufferChange: (isBuffering: boolean) => void;
+}
+
+const Sound = ({
+  src,
+  playStatus,
+  volume,
+  loop,
+  onBufferChange,
+}: SoundProps) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Syncing play status
+  useEffect(() => {
+    if (audioRef.current) {
+      if (playStatus === 'STOPPED') {
+        // pause the audio
+        audioRef.current.pause();
+      } else if (playStatus === 'PLAYING') {
+        // start playing the audio
+        audioRef.current.play();
+      }
+    }
+  }, [playStatus]);
+
+  // Syncing volume
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  }, [volume]);
+
+  // Emit buffering state change
+  // Reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+  useEffect(() => {
+    const handleBuffering = () => {
+      onBufferChange(true);
+    };
+    const handleNotBuffering = () => {
+      onBufferChange(false);
+    };
+
+    const audioElement = audioRef.current;
+
+    if (audioElement) {
+      audioElement.addEventListener('waiting', handleBuffering);
+      audioElement.addEventListener('canplay', handleNotBuffering);
+    }
+
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener('waiting', handleBuffering);
+        audioElement.removeEventListener('canplay', handleNotBuffering);
+      }
+    };
+  }, [onBufferChange]);
+
+  return <audio ref={audioRef} src={src} loop={loop} />;
+};
 
 export const Track = ({
   icon,
@@ -26,7 +90,7 @@ export const Track = ({
   const [volume, setVolume] = useState(initialVolume);
   const [isLoading, setIsLoading] = useState(false);
   const prevVolume = useRef(initialVolume);
-  const [state, setState] = useState<ReactSoundProps['playStatus']>('STOPPED');
+  const [state, setState] = useState<PlayStatus>('STOPPED');
 
   const toggle = () => {
     if (volume === 0) {
@@ -92,11 +156,10 @@ export const Track = ({
         {...props}
       />
       <Sound
-        url={audioSrc}
+        src={audioSrc}
         playStatus={state}
         loop
         volume={volume}
-        // @ts-expect-error
         onBufferChange={(isBuffering) => {
           setIsLoading(isBuffering);
         }}
