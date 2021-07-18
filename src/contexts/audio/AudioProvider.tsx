@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
 export type PlayStatus = 'PLAYING' | 'STOPPED';
 
@@ -16,6 +16,7 @@ export const AudioReactContext = createContext<AudioReactContextAPI>(
 );
 
 export const AudioProvider: React.FC = ({ children }) => {
+  const dummyAudioElementRef = useRef<HTMLAudioElement>(null);
   const [playStatus, setPlayStatus] = useState<PlayStatus>('STOPPED');
   const [tracksMap, setTracksMap] = useState<{
     [key: string]: {
@@ -117,10 +118,19 @@ export const AudioProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (playStatus === 'PLAYING') {
       navigator.mediaSession.playbackState = 'playing';
+      dummyAudioElementRef.current?.play();
     } else {
       navigator.mediaSession.playbackState = 'paused';
+      dummyAudioElementRef.current?.pause();
     }
   }, [playStatus]);
+
+  useEffect(() => {
+    if (dummyAudioElementRef.current) {
+      dummyAudioElementRef.current.volume = 0;
+      dummyAudioElementRef.current.loop = true;
+    }
+  }, []);
 
   return (
     <AudioReactContext.Provider
@@ -133,6 +143,14 @@ export const AudioProvider: React.FC = ({ children }) => {
         pause,
       }}
     >
+      {/* This is needed because the media controls
+       * will only be shown if there's an actual <audio>
+       *  element playing in the page.
+       * */}
+      <audio
+        ref={dummyAudioElementRef}
+        src="/audio/15-seconds-of-silence.mp3"
+      />
       {children}
     </AudioReactContext.Provider>
   );
