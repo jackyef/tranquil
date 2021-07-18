@@ -1,9 +1,15 @@
 import { Button, MappedColorVariant } from 'flair-kit';
-import React, { cloneElement, useEffect, useRef, useState } from 'react';
+import React, {
+  cloneElement,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { css, keyframes } from 'goober';
 import { Spinner } from 'iconic-react';
+import { AudioReactContext, PlayStatus } from '@/contexts/audio/AudioProvider';
 
-export type PlayStatus = 'PLAYING' | 'STOPPED';
 interface Props {
   label: string;
   variant: MappedColorVariant;
@@ -13,69 +19,54 @@ interface Props {
   initialVolume?: number;
 }
 
-interface SoundProps {
+interface UseSoundParams {
   src: string;
-  playStatus: PlayStatus;
   volume: number;
-  loop: boolean;
+  playStatus: PlayStatus;
   onBufferChange: (isBuffering: boolean) => void;
 }
 
-const Sound = ({
+const useSound = ({
   src,
   playStatus,
   volume,
-  loop,
   onBufferChange,
-}: SoundProps) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
+}: UseSoundParams) => {
+  const { addTrack, removeTrack, adjustVolume } = useContext(AudioReactContext);
+  const trackAddedRef = useRef('');
 
-  // Syncing play status
+  // Adding track to the AudioContext
   useEffect(() => {
-    if (audioRef.current) {
-      if (playStatus === 'STOPPED') {
-        // pause the audio
-        audioRef.current.pause();
-      } else if (playStatus === 'PLAYING') {
-        // start playing the audio
-        audioRef.current.play();
-      }
-    }
-  }, [playStatus]);
-
-  // Syncing volume
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-    }
-  }, [volume]);
-
-  // Emit buffering state change
-  // Reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
-  useEffect(() => {
-    const handleBuffering = () => {
+    const execute = async () => {
       onBufferChange(true);
-    };
-    const handleNotBuffering = () => {
+      await addTrack(src, volume / 100);
+
+      trackAddedRef.current = src;
       onBufferChange(false);
     };
 
-    const audioElement = audioRef.current;
-
-    if (audioElement) {
-      audioElement.addEventListener('waiting', handleBuffering);
-      audioElement.addEventListener('canplay', handleNotBuffering);
+    // Only re-add track if it's not already added
+    if (playStatus === 'PLAYING' && trackAddedRef.current !== src) {
+      execute();
     }
 
     return () => {
-      if (audioElement) {
-        audioElement.removeEventListener('waiting', handleBuffering);
-        audioElement.removeEventListener('canplay', handleNotBuffering);
+      // Only remove track if `src` changed
+      if (trackAddedRef.current !== src) {
+        removeTrack(src);
+        trackAddedRef.current = '';
       }
     };
-  }, [onBufferChange]);
 
-  return <audio ref={audioRef} src={src} loop={loop} />;
+    // eslint-disable-next-line
+  }, [src, addTrack, playStatus]);
+
+  // Volume syncing
+  useEffect(() => {
+    adjustVolume(src, volume / 100);
+  }, [src, volume, adjustVolume]);
+
+  return null;
 };
 
 export const Track = ({
@@ -108,6 +99,15 @@ export const Track = ({
       setState('STOPPED');
     }
   }, [playStatus, volume]);
+
+  useSound({
+    onBufferChange: (isBuffering) => {
+      setIsLoading(isBuffering);
+    },
+    src: audioSrc,
+    volume,
+    playStatus: state,
+  });
 
   const buttonClass =
     volume === 0
@@ -155,15 +155,6 @@ export const Track = ({
         onClick={toggle}
         {...props}
       />
-      <Sound
-        src={audioSrc}
-        playStatus={state}
-        loop
-        volume={volume}
-        onBufferChange={(isBuffering) => {
-          setIsLoading(isBuffering);
-        }}
-      />
 
       <input
         aria-label="Volume"
@@ -171,7 +162,11 @@ export const Track = ({
         min={0}
         max={100}
         value={volume}
-        onChange={(e) => setVolume(Number(e.target.value))}
+        onChange={(e) => {
+          const newVolume = Number(e.target.value);
+
+          setVolume(newVolume);
+        }}
       />
     </div>
   );

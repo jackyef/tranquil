@@ -3,8 +3,11 @@ import { Beach, Lightning, Mountain, Rain, Wind } from 'iconic-react';
 import { Button, useTheme } from 'flair-kit';
 import { css } from 'goober';
 import { Track } from './Track';
-import type { PlayStatus } from './Track';
-import { useState } from 'react';
+import { useContext } from 'react';
+import {
+  AudioProvider,
+  AudioReactContext,
+} from '@/contexts/audio/AudioProvider';
 
 const TRACKS = [
   {
@@ -51,9 +54,9 @@ const TRACKS = [
   },
 ] as const;
 
-export const Mixer = () => {
+const MixerContent = () => {
   const { space } = useTheme();
-  const [playStatus, setPlayStatus] = useState<PlayStatus>('STOPPED');
+  const { playStatus, play, pause } = useContext(AudioReactContext);
   const isStopped = playStatus === 'STOPPED';
 
   return (
@@ -75,9 +78,9 @@ export const Mixer = () => {
           }
           onClick={() => {
             if (isStopped) {
-              setPlayStatus('PLAYING');
+              play();
             } else {
-              setPlayStatus('STOPPED');
+              pause();
             }
           }}
           variant={isStopped ? 'success' : 'secondary'}
@@ -100,5 +103,13 @@ export const Mixer = () => {
         ))}
       </div>
     </div>
+  );
+};
+
+export const Mixer = () => {
+  return (
+    <AudioProvider>
+      <MixerContent />
+    </AudioProvider>
   );
 };
