@@ -116,12 +116,14 @@ export const AudioProvider: React.FC = ({ children }) => {
   }, [play, pause]);
 
   useEffect(() => {
-    if (playStatus === 'PLAYING') {
-      navigator.mediaSession.playbackState = 'playing';
-      dummyAudioElementRef.current?.play();
-    } else {
-      navigator.mediaSession.playbackState = 'paused';
-      dummyAudioElementRef.current?.pause();
+    if ('mediaSession' in navigator) {
+      if (playStatus === 'PLAYING') {
+        navigator.mediaSession.playbackState = 'playing';
+        dummyAudioElementRef.current?.play();
+      } else {
+        navigator.mediaSession.playbackState = 'paused';
+        dummyAudioElementRef.current?.pause();
+      }
     }
   }, [playStatus]);
 
